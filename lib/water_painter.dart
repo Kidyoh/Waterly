@@ -56,7 +56,6 @@ class WaterPainter extends CustomPainter {
 
     _paintBackground(canvas, size);
     _paintRays(canvas, size, t);
-    _paintGlass(canvas, size);
 
     // The surface as a polyline, and the regions below (water) and above (air).
     final pts = <Offset>[
@@ -164,46 +163,6 @@ class WaterPainter extends CustomPainter {
       );
       canvas.restore();
     }
-  }
-
-  /// The faint outline of a glass behind the water.
-  void _paintGlass(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final r = Rect.fromLTRB(w * 0.2, h * 0.34, w * 0.7, h * 0.63);
-    final glass = RRect.fromRectAndCorners(
-      r,
-      topLeft: const Radius.circular(22),
-      topRight: const Radius.circular(22),
-      bottomLeft: const Radius.circular(34),
-      bottomRight: const Radius.circular(34),
-    );
-    canvas.drawRRect(
-      glass,
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
-        ..color = _white.withValues(alpha: 0.18),
-    );
-    // Bright rim.
-    canvas.drawLine(
-      Offset(r.left + 20, r.top),
-      Offset(r.right - 20, r.top),
-      Paint()
-        ..strokeWidth = 3
-        ..strokeCap = StrokeCap.round
-        ..color = _white.withValues(alpha: 0.45)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
-    );
-    // Reflection on the right wall.
-    canvas.drawLine(
-      Offset(r.right - 14, r.top + 30),
-      Offset(r.right - 14, r.top + r.height * 0.5),
-      Paint()
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round
-        ..color = _white.withValues(alpha: 0.22),
-    );
   }
 
   void _paintWater(Canvas canvas, Size size, List<Offset> pts, Path water) {
