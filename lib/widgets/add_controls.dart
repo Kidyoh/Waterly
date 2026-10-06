@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 
-/// "+ 150 ml", "+ 250 ml" and the lime "Custom" pill.
+/// The two cup buttons ("+ 150 ml", "+ 250 ml") and the lime "Custom"
+/// pill. Long-press a cup button to change its size.
 class AddControls extends StatelessWidget {
-  const AddControls({super.key, required this.onAdd, required this.onCustom});
+  const AddControls({
+    super.key,
+    required this.cups,
+    required this.onAdd,
+    required this.onEditCup,
+    required this.onCustom,
+  });
 
+  final List<int> cups;
   final ValueChanged<int> onAdd;
+  final ValueChanged<int> onEditCup;
   final VoidCallback onCustom;
 
   @override
@@ -21,9 +30,14 @@ class AddControls extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                _QuickAdd(ml: 150, onTap: () => onAdd(150)),
-                const SizedBox(width: 14),
-                _QuickAdd(ml: 250, onTap: () => onAdd(250)),
+                for (var i = 0; i < cups.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 14),
+                  _QuickAdd(
+                    ml: cups[i],
+                    onTap: () => onAdd(cups[i]),
+                    onLongPress: () => onEditCup(i),
+                  ),
+                ],
               ],
             ),
           ),
@@ -54,15 +68,21 @@ class AddControls extends StatelessWidget {
 }
 
 class _QuickAdd extends StatelessWidget {
-  const _QuickAdd({required this.ml, required this.onTap});
+  const _QuickAdd({
+    required this.ml,
+    required this.onTap,
+    required this.onLongPress,
+  });
 
   final int ml;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   @override
   Widget build(BuildContext context) {
     return _Pressable(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Row(
         children: [
           Container(
@@ -76,7 +96,7 @@ class _QuickAdd extends StatelessWidget {
           ),
           const SizedBox(width: 9),
           Text(
-            '$ml ml',
+            '${formatMl(ml)} ml',
             style: manrope(
               12,
               weight: FontWeight.w500,
@@ -91,9 +111,14 @@ class _QuickAdd extends StatelessWidget {
 
 /// Shrinks slightly while pressed.
 class _Pressable extends StatefulWidget {
-  const _Pressable({required this.onTap, required this.child});
+  const _Pressable({
+    required this.onTap,
+    required this.child,
+    this.onLongPress,
+  });
 
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final Widget child;
 
   @override
@@ -113,6 +138,12 @@ class _PressableState extends State<_Pressable> {
       onTapUp: (_) => _set(false),
       onTapCancel: () => _set(false),
       onTap: widget.onTap,
+      onLongPress: widget.onLongPress == null
+          ? null
+          : () {
+              _set(false);
+              widget.onLongPress!();
+            },
       child: AnimatedScale(
         scale: _down ? 0.92 : 1,
         duration: const Duration(milliseconds: 120),

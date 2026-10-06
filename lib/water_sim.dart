@@ -128,6 +128,19 @@ class WaterSim extends ChangeNotifier {
     ripples.add(Ripple(pourX, 8));
   }
 
+  /// The goal-reached moment: the water surges up, waves run across the
+  /// whole surface and bubbles burst from everywhere.
+  void celebrate() {
+    _levelVel += 0.35;
+    slosh = 1.2;
+    for (var i = 0; i < 5; i++) {
+      ripples.add(Ripple(size.width * (0.1 + i * 0.2), 10));
+    }
+    for (var i = 0; i < 60; i++) {
+      _spawnBubble(_rng.nextDouble() * size.width, 20, 520);
+    }
+  }
+
   /// Feeds an accelerometer reading (device axes, m/s², gravity reaction).
   void setGravity(double ax, double ay) {
     // Phone lying flat: the roll is undefined, keep the last one.

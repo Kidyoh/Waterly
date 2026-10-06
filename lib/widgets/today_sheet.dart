@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 import '../water_store.dart';
+import 'week_strip.dart';
 
 /// The lavender "Today" card listing every drink logged today.
 class TodaySheet extends StatelessWidget {
@@ -36,13 +37,30 @@ class TodaySheet extends StatelessWidget {
             controller: controller,
             padding: EdgeInsets.fromLTRB(28, 26, 28, 24 + bottom),
             children: [
-              Text(
-                'Today',
-                style: manrope(
-                  30,
-                  weight: FontWeight.w500,
-                  letterSpacing: -0.6,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'Today',
+                    style: manrope(
+                      30,
+                      weight: FontWeight.w500,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: WeekStrip(
+                          days: store.recentDays(7),
+                          streak: store.streak,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               if (entries.isEmpty)

@@ -12,6 +12,7 @@ Future<int?> showAmountSheet(
   required int step,
   required List<int> presets,
   required String action,
+  String? hint,
 }) {
   return showModalBottomSheet<int>(
     context: context,
@@ -25,6 +26,7 @@ Future<int?> showAmountSheet(
       step: step,
       presets: presets,
       action: action,
+      hint: hint,
     ),
   );
 }
@@ -38,6 +40,7 @@ class _AmountSheet extends StatefulWidget {
     required this.step,
     required this.presets,
     required this.action,
+    this.hint,
   });
 
   final String title;
@@ -47,6 +50,7 @@ class _AmountSheet extends StatefulWidget {
   final int step;
   final List<int> presets;
   final String action;
+  final String? hint;
 
   @override
   State<_AmountSheet> createState() => _AmountSheetState();
@@ -142,6 +146,17 @@ class _AmountSheetState extends State<_AmountSheet> {
                 ),
             ],
           ),
+          if (widget.hint != null) ...[
+            const SizedBox(height: 14),
+            Text(
+              widget.hint!,
+              style: manrope(
+                12,
+                color: WaterColors.ink.withValues(alpha: 0.5),
+                height: 1.4,
+              ),
+            ),
+          ],
           const SizedBox(height: 22),
           SizedBox(
             width: double.infinity,
