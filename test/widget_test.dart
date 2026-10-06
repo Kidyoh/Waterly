@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:waterly/onboarding_screen.dart';
 import 'package:waterly/theme.dart';
 import 'package:waterly/water_screen.dart';
 import 'package:waterly/water_sim.dart';
@@ -71,5 +72,40 @@ void main() {
 
     expect(store.total, 150);
     expect(find.text('Water (+150)'), findsOneWidget);
+  });
+
+  testWidgets('onboarding saves the goal and opens the tracker', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(useSensors: false)),
+    );
+    await tester.pump();
+
+    Future<void> frames(int n) async {
+      for (var i = 0; i < n; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+    }
+
+    await tester.tap(find.text('Skip'));
+    await frames(20);
+    expect(find.text('2,000'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.add_rounded));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('2,250'), findsOneWidget);
+
+    await tester.tap(find.text('Get started'));
+    await tester.runAsync(() => Future.delayed(const Duration(seconds: 1)));
+    await frames(30);
+
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getBool(OnboardingScreen.doneKey), isTrue);
+    expect(prefs.getInt('goal'), 2250);
+    expect(find.byType(WaterScreen), findsOneWidget);
   });
 }

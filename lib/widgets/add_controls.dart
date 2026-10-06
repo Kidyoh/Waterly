@@ -12,11 +12,23 @@ class AddControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _QuickAdd(ml: 150, onTap: () => onAdd(150)),
-        const SizedBox(width: 14),
-        _QuickAdd(ml: 250, onTap: () => onAdd(250)),
-        const Spacer(),
+        // Shrinks on narrow screens or with large system text.
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                _QuickAdd(ml: 150, onTap: () => onAdd(150)),
+                const SizedBox(width: 14),
+                _QuickAdd(ml: 250, onTap: () => onAdd(250)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
         _Pressable(
           onTap: onCustom,
           child: Container(

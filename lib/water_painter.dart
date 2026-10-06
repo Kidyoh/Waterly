@@ -39,10 +39,14 @@ class TextCache {
 /// Paints the whole water scene. The header and percentage are painted here
 /// too, so the parts below the surface can be refracted by the water.
 class WaterPainter extends CustomPainter {
-  WaterPainter(this.sim, this.cache) : super(repaint: sim);
+  WaterPainter(this.sim, this.cache, {this.showText = true})
+    : super(repaint: sim);
 
   final WaterSim sim;
   final TextCache cache;
+
+  /// False for a bare water background (onboarding).
+  final bool showText;
 
   static const _white = Colors.white;
 
@@ -67,6 +71,12 @@ class WaterPainter extends CustomPainter {
     final air = Path()
       ..addPolygon([...pts, Offset(w + 12, -12), Offset(-12, -12)], true);
     final waterTop = pts.map((p) => p.dy).reduce(math.min);
+
+    if (!showText) {
+      _paintWater(canvas, size, pts, water);
+      _paintBubbles(canvas, water);
+      return;
+    }
 
     // Header text.
     final fs = (w * 0.083).clamp(24.0, 40.0);
@@ -118,7 +128,6 @@ class WaterPainter extends CustomPainter {
     _paintBelow(canvas, percent, pctOffset, water, waterTop, t);
 
     _paintBubbles(canvas, water);
-    _paintPour(canvas, t);
   }
 
   void _paintBackground(Canvas canvas, Size size) {
@@ -289,44 +298,6 @@ class WaterPainter extends CustomPainter {
     canvas.restore();
   }
 
-  /// A thin stream falling from the top of the screen into the water.
-  void _paintPour(Canvas canvas, double t) {
-    if (sim.pour <= 0) return;
-    final p = 1 - sim.pour / WaterSim.pourDuration;
-    final x = sim.pourX + math.sin(t * 23) * 0.7;
-    final surf = sim.surfaceY(x);
-    if (surf <= 0) return;
-    final bottom = surf * math.min(1.0, p / 0.15);
-    final top = p < 0.75 ? 0.0 : surf * ((p - 0.75) / 0.25);
-    if (bottom - top < 1) return;
-    canvas.drawLine(
-      Offset(x, top),
-      Offset(x, bottom),
-      Paint()
-        ..strokeWidth = 3
-        ..strokeCap = StrokeCap.round
-        ..shader = ui.Gradient.linear(
-          Offset(x, 0),
-          Offset(x, surf),
-          [
-            _white.withValues(alpha: 0),
-            _white.withValues(alpha: 0.35),
-            _white.withValues(alpha: 0.85),
-          ],
-          [0, 0.55, 1],
-        ),
-    );
-    if (p > 0.15) {
-      canvas.drawCircle(
-        Offset(x, surf),
-        9,
-        Paint()
-          ..color = _white.withValues(alpha: 0.3)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-      );
-    }
-  }
-
   TextSpan _headerSpan(Tone tone, double fs, String shown, String goal) {
     TextStyle style(bool bright, FontWeight weight) => manrope(
       fs,
@@ -361,5 +332,7 @@ class WaterPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(WaterPainter oldDelegate) =>
-      oldDelegate.sim != sim || oldDelegate.cache != cache;
+      oldDelegate.sim != sim ||
+      oldDelegate.cache != cache ||
+      oldDelegate.showText != showText;
 }

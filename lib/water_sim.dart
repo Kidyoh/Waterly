@@ -24,7 +24,7 @@ class Ripple {
 }
 
 /// Physics for the water: fill level, tilt against gravity, sloshing waves,
-/// the pouring stream and bubbles. Ticked every frame by the screen and
+/// pouring and bubbles. Ticked every frame by the screen and
 /// read by the painter.
 class WaterSim extends ChangeNotifier {
   static const pourDuration = 0.9;
@@ -116,7 +116,10 @@ class WaterSim extends ChangeNotifier {
     _targetLevel = goal <= 0 ? 0 : math.min(totalMl / goal, 1.08);
   }
 
-  /// Pours water in: a stream, bubbles, ripples, then the level rises.
+  /// Moves the water to [fraction] of the screen without changing totals.
+  void setLevel(double fraction) => _targetLevel = fraction;
+
+  /// Pours water in: bubbles and ripples, then the level rises.
   void pourIn(int totalMl, int goal) {
     setTotals(totalMl, goal);
     pour = pourDuration;
@@ -153,7 +156,7 @@ class WaterSim extends ChangeNotifier {
     shownMl += (_targetMl - shownMl) * (1 - math.exp(-5 * dt));
     if ((_targetMl - shownMl).abs() < 0.5) shownMl = _targetMl;
 
-    // Pouring stream.
+    // Pouring: bubbles and ripples where the water lands.
     if (pour > 0) {
       pour = math.max(0, pour - dt);
       _bubbleClock += dt;

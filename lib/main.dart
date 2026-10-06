@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'onboarding_screen.dart';
 import 'theme.dart';
 import 'water_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // The water follows gravity, so the UI itself must not rotate.
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -18,11 +20,17 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const WaterlyApp());
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    WaterlyApp(onboarded: prefs.getBool(OnboardingScreen.doneKey) ?? false),
+  );
 }
 
 class WaterlyApp extends StatelessWidget {
-  const WaterlyApp({super.key});
+  const WaterlyApp({super.key, this.onboarded = true});
+
+  /// False on first launch, which shows the onboarding.
+  final bool onboarded;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,7 @@ class WaterlyApp extends StatelessWidget {
         fontFamily: 'Manrope',
         colorScheme: ColorScheme.fromSeed(seedColor: WaterColors.bgBottom),
       ),
-      home: const WaterScreen(),
+      home: onboarded ? const WaterScreen() : const OnboardingScreen(),
     );
   }
 }
