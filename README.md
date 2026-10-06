@@ -47,6 +47,15 @@ flutter build apk --release
 
 The release build is signed with the debug key, which is fine for installing it yourself. Publishing to the Play Store needs your own signing key.
 
+## Banners
+
+Square launch banners for 1.1 are in `docs/banners/` (2160×2160). They're laid out in `tool/banners/banners.html` around real app screens:
+
+```bash
+flutter test tool/render --update-goldens   # app screens for the phone mockups
+node tool/banners/render.cjs                 # needs the playwright package
+```
+
 ## Icon
 
 The icon is drawn in code (`tool/icon/generate_icon_test.dart`). To regenerate it:
@@ -69,4 +78,4 @@ dart run flutter_launcher_icons
 | `lib/widgets/` | Add buttons, Today sheet, week strip, settings and amount sheets |
 | `tool/render/` | Renders app screens to PNG (`flutter test tool/render --update-goldens`) |
 
-Font: [Manrope](https://github.com/sharanda/manrope) (SIL Open Font License, see `assets/fonts/OFL.txt`).
+Fonts: [Manrope](https://github.com/sharanda/manrope) in the app, plus Instrument Serif in the banners (both SIL Open Font License, see `assets/fonts/OFL.txt` and `tool/banners/fonts/`).

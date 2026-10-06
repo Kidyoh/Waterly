@@ -106,8 +106,18 @@ void main() {
     await tester.pumpWidget(const WaterlyApp());
     await _frames(tester, 240);
     await tester.tap(find.text('250 ml'));
-    await _frames(tester, 40);
+    await _frames(tester, 110);
     await _snap(tester, 'goal');
+    await tester.pumpWidget(const SizedBox());
+  });
+
+  // Settled tilt with no pour, so a mockup rotated by atan2(3.2, 9.6)
+  // shows level water.
+  testWidgets('level', (tester) async {
+    await _setUp(tester, _history([250, 250, 250, 250, 150]), -3.2);
+    await tester.pumpWidget(const WaterlyApp());
+    await _frames(tester, 400);
+    await _snap(tester, 'level');
     await tester.pumpWidget(const SizedBox());
   });
 
