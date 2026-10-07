@@ -89,7 +89,21 @@ class WaterStore extends ChangeNotifier {
   DateTime? get lastDrink => entries.isEmpty ? null : entries.first.time;
 
   Future<void> load() async {
-    final prefs = _prefs = await SharedPreferences.getInstance();
+    _prefs = await SharedPreferences.getInstance();
+    _readAll();
+  }
+
+  /// Re-reads storage, which the home screen widget also writes to.
+  Future<void> reload() async {
+    final prefs = _prefs;
+    if (prefs == null) return load();
+    await prefs.reload();
+    _day = dayKey(DateTime.now());
+    _readAll();
+  }
+
+  void _readAll() {
+    final prefs = _prefs!;
     goal = prefs.getInt('goal') ?? defaultGoal;
     final savedCups = prefs.getStringList('cups');
     if (savedCups != null && savedCups.length == defaultCups.length) {

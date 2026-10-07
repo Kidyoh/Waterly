@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:clipToOutline="true">
+
+    <!-- The water, drawn by WaterRenderer. Tap to wake it. -->
+    <ImageView
+        android:id="@+id/water"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/widget_water_description"
+        android:scaleType="fitXY" />
+
+    <ImageView
+        android:id="@+id/open"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="6dp"
+        android:alpha="0.75"
+        android:contentDescription="@string/widget_open_description"
+        android:padding="8dp"
+        android:src="@drawable/ic_stat_waterly" />
+</FrameLayout>

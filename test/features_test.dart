@@ -51,6 +51,28 @@ void main() {
       expect(store.streak, 1);
     });
 
+    test('reload picks up drinks logged by the widget', () async {
+      SharedPreferences.setMockInitialValues({});
+      final store = WaterStore();
+      await store.load();
+      store.add(250);
+
+      // What WaterData.add on Android does: newest first, same key.
+      final prefs = await SharedPreferences.getInstance();
+      final raw = jsonDecode(prefs.getString('entries_${_key(0)}')!) as List;
+      await prefs.setString(
+        'entries_${_key(0)}',
+        jsonEncode([
+          {'a': 330, 't': DateTime.now().millisecondsSinceEpoch},
+          ...raw,
+        ]),
+      );
+
+      await store.reload();
+      expect(store.total, 580);
+      expect(store.entries.first.amount, 330);
+    });
+
     test('cup sizes and reminder settings persist', () async {
       SharedPreferences.setMockInitialValues({});
       final store = WaterStore();

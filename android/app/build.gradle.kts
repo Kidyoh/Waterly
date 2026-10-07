@@ -31,6 +31,11 @@ android {
         versionName = flutter.versionName
     }
 
+    testOptions {
+        // Robolectric renders widget previews with the real Android graphics stack.
+        unitTests.isIncludeAndroidResources = true
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -52,4 +57,14 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.17")
+    testImplementation("androidx.test:core:1.6.1")
+}
+
+// Unit tests package the merged assets, which Flutter's copy task also
+// writes to; order them so Gradle accepts the build.
+tasks.configureEach {
+    val variant = Regex("package(\\w+)UnitTestForUnitTest").matchEntire(name)?.groupValues?.get(1)
+    if (variant != null) dependsOn("copyFlutterAssets$variant")
 }

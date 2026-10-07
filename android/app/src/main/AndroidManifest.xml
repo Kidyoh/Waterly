@@ -2,6 +2,8 @@
     <!-- Drink reminders. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Brief live sessions on the home screen widget. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:label="Waterly"
         android:name="${applicationName}"
@@ -33,6 +35,24 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Home screen widgets, and the short service that makes their water move. -->
+        <receiver android:name=".widget.SmallWaterWidget" android:exported="false" android:label="@string/widget_small_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/water_widget_small" />
+        </receiver>
+        <receiver android:name=".widget.MediumWaterWidget" android:exported="false" android:label="@string/widget_medium_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/water_widget_medium" />
+        </receiver>
+        <service
+            android:name=".widget.LiveWaterService"
+            android:exported="false"
+            android:foregroundServiceType="shortService" />
+
         <!-- Shows scheduled reminders, and restores them after a reboot. -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

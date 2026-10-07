@@ -26,8 +26,21 @@ A water intake tracker in Flutter, where the screen itself is the glass.
 - **This week and streak.** Seven tiny glasses next to "Today" show each day's level, plus how many days in a row you've hit your goal.
 - **Your own cups.** Long-press `+150` or `+250` to set your mug or bottle size.
 - **Gentle reminders.** Off by default. When on, they come every 1–3 hours within the hours you choose, and stay quiet when you've just had a drink, are ahead of pace, or have hit your goal.
+- **Home screen widgets (Android).** A 2×2 with today's water and a 4×2 with buttons for your two cups. Tap the widget and the water comes alive for about 8 seconds: it follows the tilt of your phone, sloshes, and pours when you log a drink, then settles back. Drinks logged from the widget show up in the app.
 - **Settings** (top-left button): daily goal, cup sizes and reminders. You can also tap the header to change the goal.
 - Data is saved on the device and resets each day.
+
+### Widget
+
+<p>
+  <img src="docs/screenshots/widget_small.png" width="160">
+  <img src="docs/screenshots/widget_medium.png" width="330">
+</p>
+<img src="docs/screenshots/widget_live.png" width="660">
+
+*A live session: tipped and pouring, still sloshing, settled.*
+
+Widgets can't read sensors or animate by themselves. A tap starts a short foreground service (`LiveWaterService`), which Android allows from a widget tap. It reads the accelerometer and sends the widget a new frame about 15 times a second. The water physics and drawing are a Kotlin port of the app's (`android/app/src/main/kotlin/com/kidyoh/waterly/widget/`), and the widget reads and writes the same storage as the app.
 
 ## Run it
 
@@ -54,6 +67,14 @@ Square launch banners for 1.1 are in `docs/banners/` (2160×2160). They're laid 
 ```bash
 flutter test tool/render --update-goldens   # app screens for the phone mockups
 node tool/banners/render.cjs                 # needs the playwright package
+```
+
+## Widget previews
+
+Robolectric renders widget frames with Android's real graphics stack to `android/app/build/widget-previews/`, and checks the storage format shared with the app:
+
+```bash
+cd android && ./gradlew :app:testDebugUnitTest
 ```
 
 ## Icon

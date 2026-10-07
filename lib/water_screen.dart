@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
+import 'home_widgets.dart';
 import 'reminders.dart';
 import 'theme.dart';
 import 'water_painter.dart';
@@ -57,7 +58,7 @@ class _WaterScreenState extends State<WaterScreen>
     }
     _store.load().then((_) {
       _sim.setTotals(_store.total, _store.goal);
-      _reschedule();
+      _syncOutside();
     });
   }
 
@@ -75,19 +76,21 @@ class _WaterScreenState extends State<WaterScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
-    if (_store.refreshDay()) _sim.setTotals(_store.total, _store.goal);
-    _reschedule();
+    // Picks up drinks logged from the home screen widget, and a new day.
+    _store.reload().then((_) => _totalsChanged());
   }
 
-  /// Rebuilds the reminder plan, which depends on today's total.
-  void _reschedule() {
+  /// Updates what lives outside the app and depends on today's total:
+  /// the reminder plan and the home screen widgets.
+  void _syncOutside() {
     unawaited(Reminders.instance.reschedule(_store).catchError((_) {}));
+    HomeWidgets.refresh();
   }
 
   /// Applies a change to the totals or goal everywhere it shows.
   void _totalsChanged() {
     _sim.setTotals(_store.total, _store.goal);
-    _reschedule();
+    _syncOutside();
   }
 
   void _tick(Duration elapsed) {
@@ -101,7 +104,7 @@ class _WaterScreenState extends State<WaterScreen>
     HapticFeedback.mediumImpact();
     _store.add(ml);
     _sim.pourIn(_store.total, _store.goal);
-    _reschedule();
+    _syncOutside();
     if (before < _store.goal && _store.total >= _store.goal) _celebrate();
   }
 
@@ -187,7 +190,9 @@ class _WaterScreenState extends State<WaterScreen>
       presets: const [150, 200, 250, 330, 500, 750],
       action: 'Save cup',
     );
-    if (ml != null) _store.setCup(index, ml);
+    if (ml == null) return;
+    _store.setCup(index, ml);
+    HomeWidgets.refresh();
   }
 
   Future<void> _setReminders(ReminderSettings value) async {
@@ -208,7 +213,7 @@ class _WaterScreenState extends State<WaterScreen>
       return;
     }
     _store.setReminders(value);
-    _reschedule();
+    _syncOutside();
   }
 
   void _openSettings() {
