@@ -60,6 +60,16 @@ flutter build apk --release
 
 The release build is signed with the debug key, which is fine for installing it yourself. Publishing to the Play Store needs your own signing key.
 
+## Releases
+
+Download the app from [Releases](https://github.com/Kidyoh/Waterly/releases). To publish a new version, bump `version` in `pubspec.yaml`, add `.github/release-notes/vX.Y.Z.md`, then push a tag:
+
+```bash
+git tag v1.3.0 && git push origin v1.3.0
+```
+
+`.github/workflows/release.yml` runs the tests, builds the APKs and publishes the release. To sign with your own key, so each release installs as an update over the last, add the four `ANDROID_*` repository secrets listed at the top of that file. Locally, the same key goes in `android/key.properties`, which is git-ignored.
+
 ## Banners
 
 Square launch banners for 1.1 are in `docs/banners/` (2160×2160). They're laid out in `tool/banners/banners.html` around real app screens:

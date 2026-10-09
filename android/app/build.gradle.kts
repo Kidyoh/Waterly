@@ -1,3 +1,13 @@
+import java.util.Properties
+
+// Release signing key, from android/key.properties (never committed; CI
+// writes it from repository secrets). Without it, release builds use the
+// debug key, which can't update an install signed with another key.
+val releaseKey = Properties().apply {
+    val file = rootProject.file("key.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -36,11 +46,20 @@ android {
         unitTests.isIncludeAndroidResources = true
     }
 
+    signingConfigs {
+        if (!releaseKey.isEmpty) {
+            create("release") {
+                storeFile = file(releaseKey.getProperty("storeFile"))
+                storePassword = releaseKey.getProperty("storePassword")
+                keyAlias = releaseKey.getProperty("keyAlias")
+                keyPassword = releaseKey.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (releaseKey.isEmpty) "debug" else "release")
         }
     }
 }
