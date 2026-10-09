@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_small_label">Water</string>
+    <string name="widget_medium_label">Water + quick add</string>
+    <string name="widget_small_description">Today\'s water. Tap it and tilt your phone.</string>
+    <string name="widget_medium_description">Today\'s water, with buttons for your two cup sizes.</string>
+    <string name="widget_water_description">Today\'s water. Tap to make it move.</string>
+    <string name="widget_open_description">Open Waterly</string>
+</resources>

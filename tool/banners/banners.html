@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Waterly banners</title>
+<style>
+  @font-face { font-family: Manrope; src: url(../../assets/fonts/Manrope.ttf); font-weight: 200 800; }
+  @font-face { font-family: Instrument; src: url(fonts/InstrumentSerif-Italic.ttf); font-style: italic; }
+
+  :root {
+    --ink: #0E1214;
+    --paper: #F4F1EA;
+    --teal-0: #071D25;
+    --teal-1: #0B3646;
+    --teal-2: #125466;
+    --teal-3: #1B6F7F;
+    --water: #2B95A3;
+    --foam: #8FE3E8;
+    --lime: #E4EF1C;
+    --lavender: #E9DDEB;
+    --lavender-2: #D2C0DA;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #222; font-family: Manrope, sans-serif; display: flex; flex-direction: column; gap: 40px; padding: 40px; }
+
+  .banner { position: relative; width: 1080px; height: 1080px; overflow: hidden; color: var(--paper); }
+
+  /* Header: icon + name on the left, numbered eyebrow on the right. */
+  .brand { position: absolute; top: 64px; left: 64px; display: flex; align-items: center; gap: 22px; z-index: 5; }
+  .brand img { width: 78px; height: 78px; border-radius: 19px; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
+  .brand span { font-size: 40px; font-weight: 800; letter-spacing: -1.6px; }
+  .eyebrow { position: absolute; top: 90px; right: 64px; font-size: 21px; font-weight: 700; letter-spacing: .38em; z-index: 5; }
+
+  .headline { position: absolute; left: 60px; top: 196px; font-size: 138px; font-weight: 800; line-height: .9; letter-spacing: -0.058em; z-index: 4; }
+  .serif { font-family: Instrument; font-style: italic; font-weight: 400; letter-spacing: -0.02em; line-height: .95; }
+  .sub { position: absolute; left: 64px; font-size: 31px; font-weight: 500; line-height: 1.32; letter-spacing: -0.4px; z-index: 4; }
+
+  /* Phone mockup around a real render (1170×2532). */
+  .phone { position: absolute; width: 420px; aspect-ratio: 1170 / 2532; padding: 12px; border-radius: 62px; background: #0A0A0A;
+           box-shadow: 0 40px 80px rgba(0,0,0,.45), inset 0 0 0 2px #2a2a2a; z-index: 3; }
+  .phone img { width: 100%; height: 100%; border-radius: 51px; display: block; }
+  .phone::after { content: ''; position: absolute; top: 26px; left: 50%; width: 112px; height: 32px; margin-left: -56px; border-radius: 20px; background: #0A0A0A; }
+
+  /* Pills, like the app's controls. */
+  .pill { position: absolute; display: inline-flex; align-items: center; gap: 18px; border-radius: 999px; font-weight: 700; letter-spacing: -0.8px; white-space: nowrap; z-index: 4; }
+  .plus { display: grid; place-items: center; border-radius: 50%; background: #223A44; color: #fff; font-weight: 500; }
+
+  /* 01 */
+  .b1 { background:
+          radial-gradient(900px 700px at -10% -10%, rgba(27,111,127,.55), transparent 60%),
+          radial-gradient(700px 600px at 110% 110%, rgba(228,239,28,.16), transparent 60%),
+          var(--teal-0); }
+  .b1 .eyebrow { color: var(--lime); }
+
+  /* 02 */
+  .b2 { background: linear-gradient(170deg, var(--teal-1), var(--teal-2) 55%, var(--teal-3)); }
+  .b2 .eyebrow { color: var(--foam); }
+
+  /* 03 */
+  .b3 { background: radial-gradient(800px 700px at 100% 0%, #F2F87A, transparent 60%), var(--lime); color: var(--ink); }
+  .b3 .eyebrow { color: var(--teal-2); }
+  .b3 .brand img { box-shadow: 0 10px 30px rgba(14,18,20,.2); }
+
+  /* 04 */
+  .b4 { background:
+          radial-gradient(700px 600px at 85% 30%, rgba(228,239,28,.22), transparent 60%),
+          linear-gradient(180deg, var(--teal-0), var(--teal-1)); }
+  .b4 .eyebrow { color: var(--lime); }
+
+  /* 05 */
+  .b5 { background: linear-gradient(165deg, #F3ECF4, var(--lavender) 45%, var(--lavender-2)); color: var(--ink); }
+  .b5 .eyebrow { color: var(--teal-2); }
+  .b5 .brand img { box-shadow: 0 10px 30px rgba(14,18,20,.18); }
+
+  /* 06 */
+  .b6 { background:
+          radial-gradient(800px 600px at 0% 100%, rgba(43,149,163,.35), transparent 60%),
+          linear-gradient(180deg, #0A1316, var(--teal-0)); }
+  .b6 .eyebrow { color: var(--foam); }
+
+  /* 07 */
+  .b7 { background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); }
+  .b7 .eyebrow { color: var(--lime); }
+
+  /* Week strip (05). */
+  .card { position: absolute; border-radius: 48px; background: linear-gradient(180deg, #FBF8FC, #F1E8F3); box-shadow: 0 30px 70px rgba(60,30,70,.18); z-index: 3; }
+  .glasses { display: flex; gap: 22px; align-items: flex-end; }
+  .glass { width: 74px; height: 116px; border: 4px solid rgba(14,18,20,.18); border-radius: 12px 12px 26px 26px; overflow: hidden; display: flex; align-items: flex-end; }
+  .glass i { display: block; width: 100%; background: var(--water); }
+  .glass.met i { background: var(--teal-2); }
+  .glass.today { border-color: var(--ink); }
+  .days { display: flex; gap: 22px; margin-top: 14px; }
+  .days span { width: 74px; text-align: center; font-size: 20px; font-weight: 700; color: rgba(14,18,20,.4); }
+  .streak { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 30px; font-weight: 700; letter-spacing: -0.6px; }
+
+  /* Notifications (06). */
+  .note { position: absolute; width: 640px; padding: 26px 30px; border-radius: 36px; background: rgba(244,241,234,.92); color: var(--ink);
+          box-shadow: 0 30px 60px rgba(0,0,0,.35); z-index: 4; }
+  .note header { display: flex; align-items: center; gap: 14px; font-size: 19px; font-weight: 700; letter-spacing: .02em; color: rgba(14,18,20,.55); }
+  .note header img { width: 38px; height: 38px; border-radius: 10px; }
+  .note header time { margin-left: auto; font-weight: 600; }
+  .note b { display: block; margin-top: 14px; font-size: 29px; letter-spacing: -0.6px; }
+  .note p { margin-top: 6px; font-size: 24px; line-height: 1.35; color: rgba(14,18,20,.7); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- 01 · HELLO -->
+<section class="banner b1" id="01-hello">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">01 · HELLO</div>
+  <h1 class="headline">Your screen<br>is the <span class="serif" style="color:var(--lime);font-size:178px">glass.</span></h1>
+  <p class="sub" style="top:660px;width:520px;color:rgba(244,241,234,.62)">A water tracker where the water is real. Log a drink, watch it rise.</p>
+  <div class="phone" style="right:44px;top:560px;transform:rotate(-7deg)"><img src="../render/out/main.png"></div>
+</section>
+
+<!-- 02 · TILT -->
+<section class="banner b2" id="02-tilt">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">02 · TILT</div>
+  <h1 class="headline">Tilt it.<br><span class="serif" style="color:var(--foam);font-size:170px">It sloshes.</span></h1>
+  <p class="sub" style="top:560px;width:430px;color:rgba(244,241,234,.66)">The water follows gravity. Tip your phone and it settles level, like the real thing.</p>
+  <!-- Rotated by atan2(3.2, 9.6) = 18.43°, the tilt the render was made at, so the water reads level. -->
+  <div class="phone" style="right:70px;top:430px;width:440px;transform:rotate(18.43deg)"><img src="../render/out/level.png"></div>
+</section>
+
+<!-- 03 · ONE TAP -->
+<section class="banner b3" id="03-one-tap">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">03 · ONE TAP</div>
+  <h1 class="headline">+250.<br><span class="serif" style="font-size:176px">Done.</span></h1>
+  <p class="sub" style="top:560px;width:460px;color:rgba(14,18,20,.66)">One tap logs a glass. Long-press to make it the size of <em>your</em> cup.</p>
+
+  <div class="pill" style="left:64px;top:770px;padding:16px 40px 16px 16px;background:var(--ink);color:#fff;font-size:44px;transform:rotate(-4deg)">
+    <span class="plus" style="width:76px;height:76px;font-size:48px;background:#2B95A3">+</span>250 ml
+  </div>
+  <div class="pill" style="left:120px;top:880px;padding:16px 40px 16px 16px;background:#fff;color:var(--ink);font-size:40px;transform:rotate(3deg);box-shadow:0 20px 40px rgba(14,18,20,.12)">
+    <span class="plus" style="width:68px;height:68px;font-size:42px">+</span>330 ml · my mug
+  </div>
+  <div class="phone" style="right:40px;top:470px;width:400px;transform:rotate(8deg)"><img src="../render/out/main.png"></div>
+</section>
+
+<!-- 04 · GOAL -->
+<section class="banner b4" id="04-goal">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">04 · GOAL</div>
+  <h1 class="headline">Hit 100%.<br><span class="serif" style="color:var(--lime);font-size:178px">Feel it.</span></h1>
+  <p class="sub" style="top:580px;width:440px;color:rgba(244,241,234,.62)">The water surges, bubbles burst, and your phone gives a little buzz.</p>
+  <div class="phone" style="right:64px;top:450px;width:430px;transform:rotate(6deg)"><img src="../render/out/goal.png"></div>
+  <div class="pill" style="left:64px;top:840px;padding:26px 40px;background:var(--lime);color:var(--ink);font-size:46px;transform:rotate(-5deg);box-shadow:0 0 60px rgba(228,239,28,.45)">
+    <svg width="46" height="46" viewBox="0 0 24 24"><path fill="#0E1214" d="M2 22l5-14 9 9-14 5zm11-17l1-3 1 3 3 1-3 1-1 3-1-3-3-1 3-1zm6 6l.7-2 .7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7zM9.5 4.5l.5-1.5.5 1.5L12 5l-1.5.5L10 7l-.5-1.5L8 5l1.5-.5z"/></svg>
+    Goal reached
+  </div>
+</section>
+
+<!-- 05 · STREAKS -->
+<section class="banner b5" id="05-streaks">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">05 · STREAKS</div>
+  <h1 class="headline">Every drop.<br><span class="serif" style="color:var(--teal-2);font-size:176px">Counted.</span></h1>
+  <p class="sub" style="top:560px;width:720px;color:rgba(14,18,20,.6)">Your week in seven little glasses, and a streak worth keeping.</p>
+  <div class="card" style="left:64px;top:700px;padding:44px 52px 40px;transform:rotate(-3deg)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:30px">
+      <span style="font-size:52px;font-weight:600;letter-spacing:-1.5px;color:var(--ink)">This week</span>
+      <span class="streak">
+        <svg width="30" height="30" viewBox="0 0 24 24"><path fill="#FF7A3D" d="M12 1.5c1.2 3.6-1.6 5.8-1.6 8.4 0 1.5 1 2.6 2.4 2.6 1.7 0 2.5-1.4 2.3-3.2 2.3 1.7 3.6 4.2 3.6 6.8A6.7 6.7 0 0 1 12 22.8a6.7 6.7 0 0 1-6.7-6.7C5.3 9.9 12 7.3 12 1.5z"/></svg>
+        12-day streak
+      </span>
+    </div>
+    <div class="glasses">
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass met"><i style="height:100%"></i></div>
+      <div class="glass today"><i style="height:62%"></i></div>
+    </div>
+    <div class="days"><span>T</span><span>F</span><span>S</span><span>S</span><span>M</span><span>T</span><span style="color:var(--ink)">W</span></div>
+  </div>
+</section>
+
+<!-- 06 · REMINDERS -->
+<section class="banner b6" id="06-reminders">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">06 · REMINDERS</div>
+  <h1 class="headline">Nudges,<br><span class="serif" style="color:var(--foam);font-size:170px">not nagging.</span></h1>
+  <p class="sub" style="top:560px;width:640px;color:rgba(244,241,234,.6)">Quiet when you’ve just had a drink, when you’re ahead, and once you hit your goal.</p>
+
+  <div class="note" style="left:64px;top:690px;transform:rotate(-3deg);opacity:.7">
+    <header><img src="../../assets/icon/icon_full.png">WATERLY<time>9:00</time></header>
+    <b>Good morning!</b>
+    <p>Start the day with a glass of water.</p>
+  </div>
+  <div class="note" style="left:300px;top:850px;transform:rotate(2deg)">
+    <header><img src="../../assets/icon/icon_full.png">WATERLY<time>now</time></header>
+    <b>Time for a glass 💧</b>
+    <p>You’re at 1,150 of 2,000 ml. A glass now keeps you on track.</p>
+  </div>
+</section>
+
+<!-- 07 · OUT NOW -->
+<section class="banner b7" id="07-out-now">
+  <div class="brand"><img src="../../assets/icon/icon_full.png"><span>Waterly</span></div>
+  <div class="eyebrow">07 · OUT NOW</div>
+  <h1 class="headline">Stay<br><span class="serif" style="color:var(--lime);font-size:190px">hydrated.</span></h1>
+  <p class="sub" style="top:560px;width:600px;color:rgba(244,241,234,.66)">Reminders, streaks, your own cups and a little celebration at 100%.</p>
+  <div class="pill" style="left:64px;top:700px;padding:22px 34px;background:var(--lime);color:var(--ink);font-size:36px">Waterly 1.1 · Out now</div>
+  <!-- Water along the bottom. -->
+  <svg style="position:absolute;left:0;bottom:0;z-index:2" width="1080" height="300" viewBox="0 0 1080 300">
+    <defs>
+      <linearGradient id="w" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#5BC3CC"/><stop offset=".25" stop-color="#2B95A3"/><stop offset="1" stop-color="#16606F"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 120 C 180 70, 330 160, 540 112 S 900 60, 1080 96 L1080 300 L0 300 Z" fill="url(#w)" opacity=".95"/>
+    <path d="M0 120 C 180 70, 330 160, 540 112 S 900 60, 1080 96" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3"/>
+    <g fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="3">
+      <circle cx="210" cy="210" r="12"/><circle cx="250" cy="250" r="7"/><circle cx="760" cy="190" r="15"/><circle cx="820" cy="240" r="8"/><circle cx="520" cy="230" r="10"/>
+    </g>
+  </svg>
+  <img src="../../assets/icon/icon_foreground.png" style="position:absolute;right:-40px;top:300px;width:600px;z-index:3;transform:rotate(8deg);filter:drop-shadow(0 30px 50px rgba(0,0,0,.35))">
+</section>
+
+</body>
+</html>
