@@ -1,9 +1,13 @@
-# Builds the Android app and publishes a GitHub Release when a version tag
-# is pushed:
+# Builds the Android app and publishes a GitHub Release, either when a
+# version tag is pushed:
 #
 #   git tag v1.2.0 && git push origin v1.2.0
 #
-# The release text comes from .github/release-notes/<tag>.md.
+# or when release notes (or this workflow) are pushed to any branch: then it
+# releases the version in pubspec.yaml, unless that version already has a
+# release. The tag is created with the release.
+#
+# The release text comes from .github/release-notes/v<version>.md.
 #
 # Signing: add these repository secrets to sign with your own key, so each
 # release installs as an update over the last one. Without them the APKs
@@ -17,13 +21,46 @@ name: Release
 on:
   push:
     tags: ['v*']
+    # Path filters apply to branch pushes only; tag pushes always run.
+    branches: ['**']
+    paths:
+      - '.github/release-notes/**'
+      - '.github/workflows/release.yml'
 
 permissions:
   contents: write
 
 jobs:
-  android:
+  # Decides which version to release, if any.
+  version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(sed -nE 's/^version: *([0-9.]+).*/\1/p' pubspec.yaml)"
+            if git ls-remote --exit-code --tags origin "refs/tags/v$version" > /dev/null; then
+              echo "::notice::v$version is already released; nothing to do."
+              exit 0
+            fi
+          fi
+          if [ ! -f ".github/release-notes/v$version.md" ]; then
+            echo "::error::Add .github/release-notes/v$version.md to release v$version."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  android:
+    needs: version
+    if: needs.version.outputs.version != ''
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -63,18 +100,19 @@ jobs:
 
       - name: Build APKs
         run: |
-          version="${GITHUB_REF_NAME#v}"
           mkdir dist
           flutter build apk --release
-          cp build/app/outputs/flutter-apk/app-release.apk "dist/Waterly-$version.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/Waterly-$VERSION.apk"
           flutter build apk --release --split-per-abi
-          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/Waterly-$version-arm64.apk"
-          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "dist/Waterly-$version-arm32.apk"
-          cp build/app/outputs/flutter-apk/app-x86_64-release.apk "dist/Waterly-$version-x86_64.apk"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/Waterly-$VERSION-arm64.apk"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "dist/Waterly-$VERSION-arm32.apk"
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk "dist/Waterly-$VERSION-x86_64.apk"
           ls -l dist
 
       - uses: softprops/action-gh-release@v2
         with:
-          name: Waterly ${{ github.ref_name }}
-          body_path: .github/release-notes/${{ github.ref_name }}.md
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          name: Waterly v${{ env.VERSION }}
+          body_path: .github/release-notes/v${{ env.VERSION }}.md
           files: dist/*.apk

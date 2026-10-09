@@ -62,7 +62,7 @@ The release build is signed with the debug key, which is fine for installing it 
 
 ## Releases
 
-Download the app from [Releases](https://github.com/Kidyoh/Waterly/releases). To publish a new version, bump `version` in `pubspec.yaml`, add `.github/release-notes/vX.Y.Z.md`, then push a tag:
+Download the app from [Releases](https://github.com/Kidyoh/Waterly/releases). To publish a new version, bump `version` in `pubspec.yaml`, add `.github/release-notes/vX.Y.Z.md`, and push. A tag push works too:
 
 ```bash
 git tag v1.3.0 && git push origin v1.3.0
